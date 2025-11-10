@@ -10,16 +10,49 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start; /* Starter på toppen */
             min-height: 100vh;
             background-color: #f4f7f6;
             color: #333;
             text-align: center;
-            padding: 10px;
+            padding: 20px;
+        }
+        h1 { color: #005a9e; }
+        
+        /* Filterknapper (Nivåvalg) */
+        .filter-group {
+            margin-bottom: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+        }
+        .filter-button {
+            background-color: #e0e0e0;
+            color: #333;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 20px; /* Pille-form */
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .filter-button:hover {
+            background-color: #ccc;
+        }
+        .filter-button.active {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
         }
 
-        h1 {
-            color: #005a9e;
+        /* Ekstra filter for perfektum */
+        #perfektum-filter {
+            margin-top: 10px;
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 8px;
         }
 
         .quiz-container {
@@ -29,17 +62,24 @@
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
             width: 90%;
             max-width: 450px;
+            margin-top: 15px;
+        }
+        
+        #quiz-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #555;
+            margin-top: 0;
         }
 
-        /* Oppgaven (f.eks. "du (machen)") */
         #task-display {
             font-size: 2.5em;
             font-weight: 500;
             color: #333;
             margin: 10px 0;
+            line-height: 1.2; /* Bedre for lange subjekter */
         }
 
-        /* Tekstfelt for svar */
         #answer-input {
             width: 100%;
             padding: 15px;
@@ -47,15 +87,11 @@
             text-align: center;
             border: 2px solid #ccc;
             border-radius: 8px;
-            box-sizing: border-box; /* Viktig for padding */
+            box-sizing: border-box; 
             margin-top: 10px;
         }
-        #answer-input:focus {
-            outline: none;
-            border-color: #007bff;
-        }
+        #answer-input:focus { outline: none; border-color: #007bff; }
 
-        /* Knapper */
         .button {
             display: block;
             width: 100%;
@@ -68,15 +104,9 @@
             margin-top: 15px;
             transition: background-color 0.2s;
         }
-
-        #check-button {
-            background-color: #28a745;
-            color: white;
-        }
-        #check-button:hover {
-            background-color: #218838;
-        }
-
+        #check-button { background-color: #28a745; color: white; }
+        #check-button:hover { background-color: #218838; }
+        
         #help-button {
             background-color: transparent;
             color: #007bff;
@@ -84,78 +114,52 @@
             border: 2px solid #007bff;
             margin-top: 20px;
             padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
         }
-        #help-button:hover {
-            background-color: #007bff;
-            color: white;
-        }
+        #help-button:hover { background-color: #007bff; color: white; }
 
-        /* Tilbakemelding */
         #feedback {
             margin-top: 15px;
             font-size: 1.2em;
             font-weight: bold;
-            height: 30px; /* Unngår at layouten hopper */
+            height: 30px;
         }
         .correct { color: #28a745; }
         .incorrect { color: #dc3545; }
 
-        /* === STIL FOR POP-UP MODAL === */
+        /* Pop-up Modal */
         .modal-overlay {
-            display: none; /* Skjult som standard */
-            position: fixed; /* Dekker hele skjermen */
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6); /* Mørk bakgrunn */
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            justify-content: center; align-items: center; z-index: 1000;
         }
-        
-        /* Den hvite boksen */
         .modal-content {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 500px;
+            background-color: #fff; padding: 30px; border-radius: 10px;
+            width: 90%; max-width: 550px; /* Litt bredere */
             box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-            position: relative;
+            position: relative; max-height: 80vh; overflow-y: auto; /* Scrollbar for mye innhold */
         }
-
         .close-button {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 2.5em;
-            font-weight: bold;
-            color: #aaa;
-            cursor: pointer;
+            position: absolute; top: 10px; right: 15px;
+            font-size: 2.5em; font-weight: bold; color: #aaa; cursor: pointer;
         }
-        .close-button:hover {
-            color: #333;
-        }
-
-        /* Stil for grammatikk-tabellen */
+        .close-button:hover { color: #333; }
+        
+        #modal-title { margin-top: 0; }
+        #modal-body p { text-align: left; line-height: 1.5; }
+        
         .grammar-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
+            width: 100%; border-collapse: collapse; margin-top: 15px;
         }
         .grammar-table th, .grammar-table td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
+            border: 1px solid #ddd; padding: 10px; text-align: left;
         }
-        .grammar-table th {
-            background-color: #f4f4f4;
-        }
+        .grammar-table th { background-color: #f4f4f4; }
         .grammar-table code {
-            font-size: 1.1em;
-            color: #dc3545;
-            font-weight: bold;
+            font-size: 1.1em; color: #dc3545; font-weight: bold;
         }
 
     </style>
@@ -164,164 +168,291 @@
 
     <h1>Tysk Verb-trener</h1>
 
+    <div class="filter-group" id="type-filter">
+        <button class="filter-button type-button active" data-type="svak">Svake</button>
+        <button class="filter-button type-button" data-type="sterk">Sterke</button>
+        <button class="filter-button type-button" data-type="modal">Modale</button>
+        <button class="filter-button type-button" data-type="spesiell">Spesielle</button>
+    </div>
+
+    <div class="filter-group" id="tense-filter">
+        <button class="filter-button tense-button active" data-tense="presens">Presens</button>
+        <button class="filter-button tense-button" data-tense="preteritum">Preteritum</button>
+        <button class="filter-button tense-button" data-tense="perfektum">Perfektum</button>
+        <button class="filter-button tense-button" data-tense="futurum">Futurum</button>
+    </div>
+    
+    <div id="perfektum-filter" class="filter-group" style="display: none;">
+        <button class="filter-button perfektum-button active" data-perfektum="hjelpeverb">Øv på Hjelpeverb</button>
+        <button class="filter-button perfektum-button" data-perfektum="partisipp">Øv på Partisipp</button>
+    </div>
+
     <div class="quiz-container">
-        <h2>Svake Verb (Presens)</h2>
-
-        <div id="task-display">ich (machen)</div>
+        <h2 id="quiz-title">Svake Verb (Presens)</h2>
         
+        <div id="task-display">ich (machen)</div>
         <input type="text" id="answer-input" placeholder="Skriv svaret her..." autocomplete="off" autocorrect="off" autocapitalize="off">
-
         <button id="check-button" class="button">Sjekk svar</button>
-
         <div id="feedback"></div>
     </div>
 
-    <button id="help-button" class="button">[?] Vis Hjelp</button>
-
+    <button id="help-button">[?] Vis Hjelp</button>
 
     <div id="modal" class="modal-overlay">
         <div class="modal-content">
             <span class="close-button">&times;</span>
-            <h2>Hjelp: Svake verb i presens</h2>
-            <p>Svake verb (også kalt regelmessige verb) følger et fast mønster i presens. Man tar verbstammen og legger til en fast ending for hver person.</p>
-            
-            <table class="grammar-table">
-                <tr>
-                    <th>Pronomen</th>
-                    <th>Ending</th>
-                    <th>Eksempel (machen)</th>
-                </tr>
-                <tr>
-                    <td>ich</td>
-                    <td><code>-e</code></td>
-                    <td>mach<b><code>-e</code></b></td>
-                </tr>
-                <tr>
-                    <td>du</td>
-                    <td><code>-st</code></td>
-                    <td>mach<b><code>-st</code></b></td>
-                </tr>
-                <tr>
-                    <td>er/sie/es</td>
-                    <td><code>-t</code></td>
-                    <td>mach<b><code>-t</code></b></td>
-                </tr>
-                <tr>
-                    <td>wir</td>
-                    <td><code>-en</code></td>
-                    <td>mach<b><code>-en</code></b></td>
-                </tr>
-                <tr>
-                    <td>ihr</td>
-                    <td><code>-t</code></td>
-                    <td>mach<b><code>-t</code></b></td>
-                </tr>
-                <tr>
-                    <td>sie/Sie</td>
-                    <td><code>-en</code></td>
-                    <td>mach<b><code>-en</code></b></td>
-                </tr>
-            </table>
+            <h2 id="modal-title">Hjelp</h2>
+            <div id="modal-body">
+                </div>
         </div>
     </div>
+
+
     <script>
         // === 1. DATABASE ===
-        // Liste over pronomen. Indeksen (0-5) er VELDIG viktig.
-        const pronomen = ['ich', 'du', 'er/sie/es', 'wir', 'ihr', 'sie/Sie'];
-
-        // En mini-database med svake verb
-        // Hvert verb har en liste med 6 bøyningsformer i presens,
-        // som matcher indeksen til pronomen-listen.
-        const verbDatabase = [
-            {
-                infinitive: 'machen',
-                type: 'svak',
-                presens: ['mache', 'machst', 'macht', 'machen', 'macht', 'machen']
-            },
-            {
-                infinitive: 'lernen',
-                type: 'svak',
-                presens: ['lerne', 'lernst', 'lernt', 'lernen', 'lernt', 'lernen']
-            },
-            {
-                infinitive: 'wohnen',
-                type: 'svak',
-                presens: ['wohne', 'wohnst', 'wohnt', 'wohnen', 'wohnt', 'wohnen']
-            },
-            {
-                infinitive: 'spielen',
-                type: 'svak',
-                presens: ['spiele', 'spielst', 'spielt', 'spielen', 'spielt', 'spielen']
-            },
-            {
-                infinitive: 'sagen',
-                type: 'svak',
-                presens: ['sage', 'sagst', 'sagt', 'sagen', 'sagt', 'sagen']
-            }
-            // (Her kan du legge til flere svake verb)
+        
+        // "Smarte" subjekter
+        const subjects = [
+            { display: 'ich', index: 0 }, { display: 'du', index: 1 },
+            { display: 'er', index: 2 }, { display: 'sie (entall)', index: 2 }, { display: 'es', index: 2 },
+            { display: 'Peter', index: 2 }, { display: 'Die Frau', index: 2 }, { display: 'Das Kind', index: 2 },
+            { display: 'Die Familie', index: 2 }, { display: 'Mein Bruder', index: 2 },
+            { display: 'wir', index: 3 }, { display: 'du und ich', index: 3 }, { display: 'Peter und ich', index: 3 },
+            { display: 'ihr', index: 4 }, { display: 'du und Peter', index: 4 }, { display: 'ihr Kinder', index: 4 },
+            { display: 'sie (flertall)', index: 5 }, { display: 'Sie (høflig)', index: 5 },
+            { display: 'Peter und Kari', index: 5 }, { display: 'Die Eltern', index: 5 }, { display: 'Die Kinder', index: 5 }
         ];
 
+        // Databasen er nå utvidet til å inkludere alle tider og typer
+        const verbDatabase = [
+            // SVAKE
+            {
+                infinitive: 'machen', type: 'svak',
+                presens: ['mache', 'machst', 'macht', 'machen', 'macht', 'machen'],
+                preteritum: ['machte', 'machtest', 'machte', 'machten', 'machtet', 'machten'],
+                perfektum_partisipp: 'gemacht', hjelpeverb: 'haben'
+            },
+            {
+                infinitive: 'lernen', type: 'svak',
+                presens: ['lerne', 'lernst', 'lernt', 'lernen', 'lernt', 'lernen'],
+                preteritum: ['lernte', 'lerntest', 'lernte', 'lernten', 'lerntet', 'lernten'],
+                perfektum_partisipp: 'gelernt', hjelpeverb: 'haben'
+            },
+            {
+                infinitive: 'wohnen', type: 'svak',
+                presens: ['wohne', 'wohnst', 'wohnt', 'wohnen', 'wohnt', 'wohnen'],
+                preteritum: ['wohnte', 'wohntest', 'wohnte', 'wohnten', 'wohntet', 'wohnten'],
+                perfektum_partisipp: 'gewohnt', hjelpeverb: 'haben'
+            },
+            // STERKE
+            {
+                infinitive: 'gehen', type: 'sterk',
+                presens: ['gehe', 'gehst', 'geht', 'gehen', 'geht', 'gehen'],
+                preteritum: ['ging', 'gingst', 'ging', 'gingen', 'gingt', 'gingen'],
+                perfektum_partisipp: 'gegangen', hjelpeverb: 'sein'
+            },
+            {
+                infinitive: 'fahren', type: 'sterk',
+                presens: ['fahre', 'fährst', 'fährt', 'fahren', 'fahrt', 'fahren'],
+                preteritum: ['fuhr', 'fuhrst', 'fuhr', 'fuhren', 'fuhrt', 'fuhren'],
+                perfektum_partisipp: 'gefahren', hjelpeverb: 'sein'
+            },
+            {
+                infinitive: 'sehen', type: 'sterk',
+                presens: ['sehe', 'siehst', 'sieht', 'sehen', 'seht', 'sehen'],
+                preteritum: ['sah', 'sahst', 'sah', 'sahen', 'saht', 'sahen'],
+                perfektum_partisipp: 'gesehen', hjelpeverb: 'haben'
+            },
+            {
+                infinitive: 'sprechen', type: 'sterk',
+                presens: ['spreche', 'sprichst', 'spricht', 'sprechen', 'sprecht', 'sprechen'],
+                preteritum: ['sprach', 'sprachst', 'sprach', 'sprachen', 'spracht', 'sprachen'],
+                perfektum_partisipp: 'gesprochen', hjelpeverb: 'haben'
+            },
+            // SPESIELLE
+            {
+                infinitive: 'haben', type: 'spesiell',
+                presens: ['habe', 'hast', 'hat', 'haben', 'habt', 'haben'],
+                preteritum: ['hatte', 'hattest', 'hatte', 'hatten', 'hattet', 'hatten'],
+                perfektum_partisipp: 'gehabt', hjelpeverb: 'haben'
+            },
+            {
+                infinitive: 'sein', type: 'spesiell',
+                presens: ['bin', 'bist', 'ist', 'sind', 'seid', 'sind'],
+                preteritum: ['war', 'warst', 'war', 'waren', 'wart', 'waren'],
+                perfektum_partisipp: 'gewesen', hjelpeverb: 'sein'
+            },
+            {
+                infinitive: 'werden', type: 'spesiell',
+                presens: ['werde', 'wirst', 'wird', 'werden', 'werdet', 'werden'],
+                preteritum: ['wurde', 'wurdest', 'wurde', 'wurden', 'wurdet', 'wurden'],
+                perfektum_partisipp: 'geworden', hjelpeverb: 'sein'
+            },
+            // MODALE
+            {
+                infinitive: 'können', type: 'modal',
+                presens: ['kann', 'kannst', 'kann', 'können', 'könnt', 'können'],
+                preteritum: ['konnte', 'konntest', 'konnte', 'konnten', 'konntet', 'konnten'],
+                perfektum_partisipp: 'gekonnt', hjelpeverb: 'haben'
+            },
+            {
+                infinitive: 'wollen', type: 'modal',
+                presens: ['will', 'willst', 'will', 'wollen', 'wollt', 'wollen'],
+                preteritum: ['wollte', 'wolltest', 'wollte', 'wollten', 'wolltet', 'wollten'],
+                perfektum_partisipp: 'gewollt', hjelpeverb: 'haben'
+            }
+        ];
+        
+        // Hjelpe-objekt for 'werden' (brukes i Futurum)
+        const werden = ['werde', 'wirst', 'wird', 'werden', 'werdet', 'werden'];
+
         // === 2. HENT HTML-ELEMENTER ===
+        const quizTitle = document.getElementById('quiz-title');
         const taskDisplay = document.getElementById('task-display');
         const answerInput = document.getElementById('answer-input');
         const checkButton = document.getElementById('check-button');
         const feedbackEl = document.getElementById('feedback');
+        
         const helpButton = document.getElementById('help-button');
         const modal = document.getElementById('modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalBody = document.getElementById('modal-body');
         const closeButton = document.querySelector('.close-button');
+        
+        const typeFilter = document.getElementById('type-filter');
+        const tenseFilter = document.getElementById('tense-filter');
+        const perfektumFilter = document.getElementById('perfektum-filter');
 
-        // Global variabel for å lagre riktig svar
+        // === 3. GLOBALE VARIABLER (App-status) ===
         let currentTask = {};
+        let quizState = 'checking'; 
+        let currentType = 'svak';
+        let currentTense = 'presens';
+        let currentPerfektumMode = 'hjelpeverb';
 
-        // === 3. KOBLE TIL HENDELSER ===
+        // === 4. KOBLE TIL HENDELSER ===
+        
+        // Filter-knapper for Verbtype
+        typeFilter.addEventListener('click', (e) => {
+            if (e.target.classList.contains('type-button')) {
+                currentType = e.target.dataset.type;
+                // Oppdater .active klassen
+                document.querySelectorAll('.type-button').forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+                generateNewTask(); // Lag ny oppgave med nye filtre
+            }
+        });
+
+        // Filter-knapper for Tid
+        tenseFilter.addEventListener('click', (e) => {
+            if (e.target.classList.contains('tense-button')) {
+                currentTense = e.target.dataset.tense;
+                // Oppdater .active klassen
+                document.querySelectorAll('.tense-button').forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+                
+                // Vis/skjul Perfektum sub-filter
+                perfektumFilter.style.display = (currentTense === 'perfektum') ? 'block' : 'none';
+                
+                generateNewTask();
+            }
+        });
+        
+        // Filter-knapper for Perfektum-modus
+        perfektumFilter.addEventListener('click', (e) => {
+            if (e.target.classList.contains('perfektum-button')) {
+                currentPerfektumMode = e.target.dataset.perfektum;
+                document.querySelectorAll('.perfektum-button').forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+                generateNewTask();
+            }
+        });
+
+        // Quiz-knapper
         checkButton.addEventListener('click', checkAnswer);
         helpButton.addEventListener('click', showModal);
         closeButton.addEventListener('click', hideModal);
-        
-        // Lukk modal hvis man klikker på bakgrunnen
         modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                hideModal();
-            }
+            if (e.target === modal) hideModal();
         });
-
-        // Tillat "Enter" for å sjekke svar
         answerInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                checkAnswer();
-            }
+            if (e.key === 'Enter') checkAnswer();
         });
 
-        // === 4. KJERNEFUNKSJONER ===
+        // === 5. KJERNEFUNKSJONER ===
         
-        /**
-         * Genererer en ny, tilfeldig oppgave.
-         */
         function generateNewTask() {
-            // (Senere vil vi filtrere databasen her basert på nivå)
-            const currentDb = verbDatabase; // For nå, bruk hele databasen
-
-            // 1. Velg et tilfeldig verb
-            const verb = currentDb[Math.floor(Math.random() * currentDb.length)];
+            // 1. Filtrer databasen
+            const filteredDb = verbDatabase.filter(verb => verb.type === currentType);
             
-            // 2. Velg et tilfeldig pronomen (få en indeks 0-5)
-            const pronounIndex = Math.floor(Math.random() * pronomen.length);
-            const pronoun = pronomen[pronounIndex];
-            
-            // 3. Finn det riktige svaret
-            const correctAnswer = verb.presens[pronounIndex];
+            // Hvis filteret er tomt (f.eks. ingen modalverb), gi en feilmelding
+            if (filteredDb.length === 0) {
+                taskDisplay.textContent = 'Ingen verb funnet';
+                answerInput.disabled = true;
+                checkButton.disabled = true;
+                return;
+            }
 
-            // 4. Lagre oppgaven globalt
+            // 2. Velg verb og subjekt
+            const verb = filteredDb[Math.floor(Math.random() * filteredDb.length)];
+            const subjectObj = subjects[Math.floor(Math.random() * subjects.length)];
+            const subjectIndex = subjectObj.index;
+            
+            let taskText = "";
+            let correctAnswer = "";
+            let promptText = "";
+
+            // 3. Bestem oppgave og svar basert på Tiden
+            switch (currentTense) {
+                case 'presens':
+                    taskText = `${subjectObj.display} (${verb.infinitive})`;
+                    correctAnswer = verb.presens[subjectIndex];
+                    promptText = "Skriv inn verbet i presens";
+                    break;
+                
+                case 'preteritum':
+                    taskText = `${subjectObj.display} (${verb.infinitive})`;
+                    correctAnswer = verb.preteritum[subjectIndex];
+                    promptText = "Skriv inn verbet i preteritum";
+                    break;
+                
+                case 'futurum':
+                    taskText = `${subjectObj.display} (${verb.infinitive})`;
+                    // Svar er "bøyd 'werden' + infinitiv"
+                    correctAnswer = `${werden[subjectIndex]} ${verb.infinitive}`;
+                    promptText = "Skriv inn verbet i futurum";
+                    break;
+
+                case 'perfektum':
+                    if (currentPerfektumMode === 'hjelpeverb') {
+                        taskText = `${subjectObj.display} (${verb.infinitive})`;
+                        // Svaret er *kun* hjelpeverbet
+                        const korrektHjelpeverb = (verb.hjelpeverb === 'haben') ? 'haben' : 'sein';
+                        // Finn det korrekte bøyde hjelpeverbet
+                        const hjelpeverbObj = verbDatabase.find(v => v.infinitive === korrektHjelpeverb);
+                        correctAnswer = hjelpeverbObj.presens[subjectIndex];
+                        promptText = "Skriv inn riktig hjelpeverb (haben/sein)";
+                    } else { // 'partisipp'
+                        taskText = `(${verb.infinitive})`;
+                        correctAnswer = verb.perfektum_partisipp;
+                        promptText = "Skriv inn perfektum partisipp";
+                    }
+                    break;
+            }
+            
+            // 4. Lagre og vis oppgaven
             currentTask = {
-                verb: verb.infinitive,
-                pronoun: pronoun,
                 answer: correctAnswer
             };
+            taskDisplay.textContent = taskText;
+            answerInput.placeholder = promptText + "...";
 
-            // 5. Vis oppgaven til eleven
-            taskDisplay.textContent = `${pronoun} (${verb.infinitive})`;
+            // 5. Oppdater tittel
+            quizTitle.textContent = `${capitalize(currentType)} Verb (${capitalize(currentTense)})`;
             
-            // 6. Tøm felt
+            // 6. Nullstill status
+            quizState = 'checking';
+            checkButton.textContent = 'Sjekk svar';
             answerInput.value = "";
             answerInput.disabled = false;
             checkButton.disabled = false;
@@ -330,48 +461,107 @@
             answerInput.focus();
         }
 
-        /**
-         * Sjekker svaret eleven har skrevet.
-         */
         function checkAnswer() {
-            const userInput = answerInput.value.trim().toLowerCase();
+            if (quizState === 'next') {
+                generateNewTask();
+                return;
+            }
 
-            if (!userInput) return; // Ikke gjør noe hvis feltet er tomt
+            const userInput = answerInput.value.trim().toLowerCase();
+            if (!userInput) return; 
 
             if (userInput === currentTask.answer) {
-                // RIKTIG!
                 feedbackEl.textContent = "Riktig!";
                 feedbackEl.className = 'correct';
                 answerInput.disabled = true;
                 checkButton.disabled = true;
-                
-                // Gi en ny oppgave etter 1 sekund
                 setTimeout(generateNewTask, 1000);
             } else {
-                // FEIL!
                 feedbackEl.textContent = `Feil. Riktig var: ${currentTask.answer}`;
                 feedbackEl.className = 'incorrect';
-                
-                // Rist på boksen (valgfritt, men stilig)
-                // (Krever en CSS-animasjon, men vi lar den være rød for nå)
+                quizState = 'next';
+                checkButton.textContent = 'Neste';
             }
         }
 
-        /**
-         * Viser pop-up-vinduet.
-         */
+        // === "SMART" HJELPE-MODAL ===
         function showModal() {
+            // Generer hjelpetekst dynamisk
+            let title = "";
+            let body = "";
+            
+            switch (currentTense) {
+                case 'presens':
+                    title = `Hjelp: Presens (${capitalize(currentType)})`;
+                    if (currentType === 'svak') {
+                        body = `<p>Svake verb følger et fast mønster. Ta stammen (infinitiv minus -en) og legg til endingene:</p>${createTableHtml(['ich', 'du', 'er/sie/es', 'wir', 'ihr', 'sie/Sie'], ['-e', '-st', '-t', '-en', '-t', '-en'])}`;
+                    } else if (currentType === 'sterk') {
+                        body = `<p>Sterke verb bruker de samme endingene som svake verb, MEN de har ofte <b>vokalskifte</b> i 2. og 3. person entall (du, er/sie/es).</p><p>Eksempel (sehen): ich sehe, men <b>du siehst</b>, <b>er sieht</b>.</p>`;
+                    } else if (currentType === 'modal') {
+                        body = `<p>Modalverb er spesielle! De har ofte vokalskifte, og 1. og 3. person (ich, er/sie/es) er <b>like</b> og har <b>ingen ending</b>.</p><p>Eksempel (können): <b>ich kann</b>, du kannst, <b>er kann</b>.</p>`;
+                    } else { // spesiell
+                        body = `<p>Spesielle verb (som haben, sein, werden) er helt uregelrette og må pugges.</p><p>Eksempel (sein): ich <b>bin</b>, du <b>bist</b>, er <b>ist</b>...</p>`;
+                    }
+                    break;
+                
+                case 'preteritum':
+                    title = `Hjelp: Preteritum (${capitalize(currentType)})`;
+                    if (currentType === 'svak') {
+                        body = `<p>Svake verb lager preteritum ved å legge til <b>-te</b> til stammen, etterfulgt av personendingene.</p>${createTableHtml(['ich', 'du', 'er/sie/es', 'wir', 'ihr', 'sie/Sie'], ['-te', '-test', '-te', '-ten', '-tet', '-ten'])}`;
+                    } else { // sterk, modal, spesiell
+                        body = `<p>Sterke, modale og spesielle verb har <b>uregelrett preteritum</b>. De får en helt ny stamvokal (f.eks. gehen -> <b>ging</b>) og må pugges.</p><p>Sterke verb har (som oftest) endingene: <b>-</b>, <b>-st</b>, <b>-</b>, <b>-en</b>, <b>-t</b>, <b>-en</b>.</p>`;
+                    }
+                    break;
+
+                case 'perfektum':
+                    title = `Hjelp: Perfektum`;
+                    if (currentPerfektumMode === 'hjelpeverb') {
+                        body = `<p>Perfektum lages med et hjelpeverb (<b>haben</b> eller <b>sein</b>) + perfektum partisipp.</p>
+                                <p><b>Hovedregel:</b></p>
+                                <ul>
+                                    <li><b>sein</b> brukes med verb som viser <b>bevegelse</b> (f.eks. <i>gehen, fahren</i>) eller <b>endring av tilstand</b> (f.eks. <i>aufwachen, sterben</i>).</li>
+                                    <li><b>haben</b> brukes med nesten alle andre verb.</li>
+                                </ul>`;
+                    } else { // partisipp
+                        body = `<p><b>Svake verb:</b> Lager partisipp med <b>ge-</b> + stamme + <b>-t</b> (f.eks. machen -> <b>ge</b>mach<b>t</b>).</p>
+                                <p><b>Sterke verb:</b> Lager partisipp med <b>ge-</b> + (ofte endret) stamme + <b>-en</b> (f.eks. sehen -> <b>ge</b>seh<b>en</b>). Disse må pugges!</p>`;
+                    }
+                    break;
+                
+                case 'futurum':
+                    title = `Hjelp: Futurum`;
+                    body = `<p>Futurum (fremtid) er enkelt! Man bruker bøyd <b>werden</b> + <b>infinitiv</b> av hovedverbet.</p>
+                            <p>Du trenger bare å kunne bøye 'werden':</p>
+                            ${createTableHtml(['ich', 'du', 'er/sie/es', 'wir', 'ihr', 'sie/Sie'], ['werde', 'wirst', 'wird', 'werden', 'werdet', 'werden'])}
+                            <p>Eksempel: "Du <b>wirst</b> (spille) <b>spielen</b>."</p>`;
+                    break;
+            }
+            
+            modalTitle.innerHTML = title;
+            modalBody.innerHTML = body;
             modal.style.display = 'flex';
         }
 
-        /**
-         * Skjuler pop-up-vinduet.
-         */
         function hideModal() {
             modal.style.display = 'none';
         }
 
-        // === 5. START APPEN ===
+        // === 6. HJELPEFUNKSJONER (verktøy) ===
+        
+        function capitalize(s) {
+            return s.charAt(0).toUpperCase() + s.slice(1);
+        }
+
+        function createTableHtml(col1, col2) {
+            let html = '<table class="grammar-table"><tr><th>Person</th><th>Form</th></tr>';
+            for (let i = 0; i < col1.length; i++) {
+                html += `<tr><td>${col1[i]}</td><td><code>${col2[i]}</code></td></tr>`;
+            }
+            html += '</table>';
+            return html;
+        }
+
+        // === 7. START APPEN ===
         generateNewTask();
 
     </script>
