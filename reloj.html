@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aprende la hora (Lær klokka på spansk)</title>
     <style>
-        /* Samme stil som før */
+        /* Grunnleggende stil */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
-            min-height: 100vh; background-color: #fff8e1; /* Litt varmere farge for spansk */
+            min-height: 100vh; background-color: #fff8e1;
             color: #333; text-align: center; padding: 10px; box-sizing: border-box;
         }
-        h1 { color: #d32f2f; margin-bottom: 10px; } /* Rød tittel */
+        h1 { color: #d32f2f; margin-bottom: 10px; }
         h2 { color: #333; height: 30px; margin: 10px 0; }
         h3 { font-weight: 500; }
         
@@ -24,7 +24,7 @@
             background-color: #f0f0f0; color: #555; font-weight: 500; flex-grow: 1; border: 2px solid #ccc; padding: 10px; cursor: pointer;
         }
         .style-button.active {
-            background-color: #fbc02d; color: #333; border-color: #f57f17; /* Gul/Oransje */
+            background-color: #fbc02d; color: #333; border-color: #f57f17;
         }
 
         /* Modus-velger */
@@ -32,7 +32,7 @@
             display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; border-bottom: 2px solid #ddd; padding-bottom: 15px; width: 100%; max-width: 600px;
         }
         .mode-button { background-color: #e0e0e0; color: #333; font-weight: bold; flex-grow: 1; border: none; padding: 10px; cursor: pointer; }
-        .mode-button.active { background-color: #d32f2f; color: white; } /* Rød aktiv knapp */
+        .mode-button.active { background-color: #d32f2f; color: white; }
         
         .mode-content { display: none; width: 100%; flex-direction: column; align-items: center; }
         .mode-content.active { display: flex; }
@@ -55,7 +55,6 @@
         .clock.draggable { cursor: grab; } .clock.dragging { cursor: grabbing; }
         .clock-number { position: absolute; width: 40px; height: 40px; top: 50%; left: 50%; margin-left: -20px; margin-top: -20px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 500; color: #333; z-index: 1; }
         
-        /* Rotasjon for tall */
         .num1 { transform: rotate(30deg) translate(0, -125px) rotate(-30deg); } .num2 { transform: rotate(60deg) translate(0, -125px) rotate(-60deg); } .num3 { transform: rotate(90deg) translate(0, -125px) rotate(-90deg); } .num4 { transform: rotate(120deg) translate(0, -125px) rotate(-120deg); } .num5 { transform: rotate(150deg) translate(0, -125px) rotate(-150deg); } .num6 { transform: rotate(180deg) translate(0, -125px) rotate(-180deg); } .num7 { transform: rotate(210deg) translate(0, -125px) rotate(-210deg); } .num8 { transform: rotate(240deg) translate(0, -125px) rotate(-240deg); } .num9 { transform: rotate(270deg) translate(0, -125px) rotate(-270deg); } .num10 { transform: rotate(300deg) translate(0, -125px) rotate(-300deg); } .num11 { transform: rotate(330deg) translate(0, -125px) rotate(-330deg); } .num12 { transform: rotate(0deg) translate(0, -125px) rotate(0deg); }
 
         /* Knapper */
@@ -67,14 +66,27 @@
         .option-button { background-color: #388e3c; width: 90%; max-width: 320px; margin-bottom: 10px; }
         .option-button:hover:not(:disabled) { background-color: #2e7d32; }
         
-        .action-button { background-color: #388e3c; font-weight: bold; padding: 15px 30px; font-size: 18px; margin-top: 10px; }
+        /* Knapper for Modo 3 */
+        #speak-controls {
+            margin-top: 15px;
+            display: none; /* Skjult til nivå er valgt */
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .action-button { background-color: #388e3c; font-weight: bold; padding: 15px 30px; font-size: 18px; margin: 5px; }
+        .action-button:hover { background-color: #2e7d32; }
         .secondary-action { background-color: #0097a7; }
+        .secondary-action:hover { background-color: #00838f; }
 
         /* Svar-visning Modus 3 */
-        #speak-answer-display { background-color: #fff; border: 2px solid #ddd; border-radius: 8px; padding: 15px; margin-top: 15px; width: 90%; max-width: 400px; text-align: left; line-height: 1.6; font-size: 1.1em; }
-        #speak-answer-display:empty { display: none; }
-
-        /* Feedback */
+        #speak-answer-display { 
+            background-color: #fff; border: 2px solid #ddd; border-radius: 8px; 
+            padding: 15px; margin: 15px auto; width: 90%; max-width: 400px; 
+            text-align: left; line-height: 1.6; font-size: 1.1em;
+            display: none; /* Skjult som standard */
+        }
+        
         #feedback { margin-top: 15px; font-size: 1.2em; font-weight: bold; height: 50px; }
         .correct { color: #388e3c; }
         .incorrect { color: #d32f2f; }
@@ -148,10 +160,12 @@
             <button class="level-button" data-level="3">Nivel 3</button>
             <button class="level-button" data-level="4">Nivel 4</button>
         </div>
-        <div id="speak-controls" style="display: none;">
+        
+        <div id="speak-controls">
             <button id="check-answer-speak" class="action-button">Comprobar</button>
             <button id="new-time-button" class="action-button secondary-action">Nueva hora</button>
         </div>
+        
         <div id="speak-answer-display"></div>
     </div>
     
@@ -257,8 +271,9 @@
             updateAnalogClock(12, 0, clockSetHands);
             
             levelDisplaySpeak.textContent = "Selecciona un nivel";
-            speakControls.style.display = "none";
+            speakControls.style.display = "none"; // Skjuler knappene ved reset
             speakAnswerDisplay.textContent = "";
+            speakAnswerDisplay.style.display = "none";
             updateDigitalClock(0, 0, digitalClockSpeak);
             updateAnalogClock(12, 0, clockSpeak);
 
@@ -364,14 +379,20 @@
             speakAnswerDisplay.innerHTML = `<b>Formal:</b> ${currentSpeakTime.formalText}<br><b>Informal:</b> ${currentSpeakTime.informalText}`;
             speakAnswerDisplay.style.display = 'block';
         });
+        
         newTimeButton.addEventListener('click', startNextRoundSpeak);
 
         function startNextRoundSpeak() {
             currentSpeakTime = generateTimeForLevel(currentLevel);
             updateAnalogClock(currentSpeakTime.hour, currentSpeakTime.minute, clockSpeak);
             updateDigitalClock(currentSpeakTime.hour, currentSpeakTime.minute, digitalClockSpeak);
+            
+            // Nullstill visning av svar
             speakAnswerDisplay.textContent = "";
             speakAnswerDisplay.style.display = 'none';
+            
+            // VIKTIG: Vis kontrollene nå som runden er i gang
+            speakControls.style.display = 'flex';
         }
 
         // --- KLOKKE LOGIKK & DRA-FUNKSJONER ---
