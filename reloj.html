@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aprende la hora (Lær klokka på spansk)</title>
+    <style>
+        /* Samme stil som før */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            min-height: 100vh; background-color: #fff8e1; /* Litt varmere farge for spansk */
+            color: #333; text-align: center; padding: 10px; box-sizing: border-box;
+        }
+        h1 { color: #d32f2f; margin-bottom: 10px; } /* Rød tittel */
+        h2 { color: #333; height: 30px; margin: 10px 0; }
+        h3 { font-weight: 500; }
+        
+        /* Time-style switcher */
+        .time-style-switcher {
+            display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; width: 100%; max-width: 600px;
+        }
+        .style-button {
+            background-color: #f0f0f0; color: #555; font-weight: 500; flex-grow: 1; border: 2px solid #ccc; padding: 10px; cursor: pointer;
+        }
+        .style-button.active {
+            background-color: #fbc02d; color: #333; border-color: #f57f17; /* Gul/Oransje */
+        }
+
+        /* Modus-velger */
+        .mode-switcher {
+            display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; border-bottom: 2px solid #ddd; padding-bottom: 15px; width: 100%; max-width: 600px;
+        }
+        .mode-button { background-color: #e0e0e0; color: #333; font-weight: bold; flex-grow: 1; border: none; padding: 10px; cursor: pointer; }
+        .mode-button.active { background-color: #d32f2f; color: white; } /* Rød aktiv knapp */
+        
+        .mode-content { display: none; width: 100%; flex-direction: column; align-items: center; }
+        .mode-content.active { display: flex; }
+
+        /* Klokker */
+        .digital-clock {
+            font-family: 'Courier New', Courier, monospace; font-size: 2.5em; font-weight: bold; color: #333;
+            background-color: #fff; padding: 10px 20px; border-radius: 10px; border: 4px solid #333;
+            margin-bottom: 10px; width: 150px; height: 50px; display: flex; align-items: center; justify-content: center;
+        }
+        .clock {
+            width: 300px; height: 300px; border: 8px solid #333; border-radius: 50%; position: relative; background-color: #fff; margin: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .center-dot { z-index: 10; width: 12px; height: 12px; background-color: #333; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .hand { position: absolute; bottom: 50%; left: 50%; transform-origin: bottom center; border-radius: 4px; }
+        .hour-hand { width: 8px; height: 80px; background-color: #333; margin-left: -4px; z-index: 5; }
+        .minute-hand { width: 4px; height: 120px; background-color: #555; margin-left: -2px; z-index: 6; }
+        .hour-hand::after, .minute-hand::after { content: ''; position: absolute; top: -10px; left: -10px; right: -10px; bottom: 0; }
+        .clock.draggable { cursor: grab; } .clock.dragging { cursor: grabbing; }
+        .clock-number { position: absolute; width: 40px; height: 40px; top: 50%; left: 50%; margin-left: -20px; margin-top: -20px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 500; color: #333; z-index: 1; }
+        
+        /* Rotasjon for tall */
+        .num1 { transform: rotate(30deg) translate(0, -125px) rotate(-30deg); } .num2 { transform: rotate(60deg) translate(0, -125px) rotate(-60deg); } .num3 { transform: rotate(90deg) translate(0, -125px) rotate(-90deg); } .num4 { transform: rotate(120deg) translate(0, -125px) rotate(-120deg); } .num5 { transform: rotate(150deg) translate(0, -125px) rotate(-150deg); } .num6 { transform: rotate(180deg) translate(0, -125px) rotate(-180deg); } .num7 { transform: rotate(210deg) translate(0, -125px) rotate(-210deg); } .num8 { transform: rotate(240deg) translate(0, -125px) rotate(-240deg); } .num9 { transform: rotate(270deg) translate(0, -125px) rotate(-270deg); } .num10 { transform: rotate(300deg) translate(0, -125px) rotate(-300deg); } .num11 { transform: rotate(330deg) translate(0, -125px) rotate(-330deg); } .num12 { transform: rotate(0deg) translate(0, -125px) rotate(0deg); }
+
+        /* Knapper */
+        .level-buttons, .options-container { margin: 10px 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+        button { padding: 12px 18px; font-size: 16px; border: none; border-radius: 8px; cursor: pointer; background-color: #1976d2; color: white; transition: background-color 0.2s; min-width: 150px; }
+        button:hover { background-color: #115293; }
+        button.level-button.active { background-color: #0d47a1; font-weight: bold; box-shadow: 0 0 0 3px #bbdefb; }
+        button.option-button:disabled { background-color: #aaa; cursor: not-allowed; opacity: 0.7; }
+        .option-button { background-color: #388e3c; width: 90%; max-width: 320px; margin-bottom: 10px; }
+        .option-button:hover:not(:disabled) { background-color: #2e7d32; }
+        
+        .action-button { background-color: #388e3c; font-weight: bold; padding: 15px 30px; font-size: 18px; margin-top: 10px; }
+        .secondary-action { background-color: #0097a7; }
+
+        /* Svar-visning Modus 3 */
+        #speak-answer-display { background-color: #fff; border: 2px solid #ddd; border-radius: 8px; padding: 15px; margin-top: 15px; width: 90%; max-width: 400px; text-align: left; line-height: 1.6; font-size: 1.1em; }
+        #speak-answer-display:empty { display: none; }
+
+        /* Feedback */
+        #feedback { margin-top: 15px; font-size: 1.2em; font-weight: bold; height: 50px; }
+        .correct { color: #388e3c; }
+        .incorrect { color: #d32f2f; }
+
+    </style>
+</head>
+<body>
+
+    <h1>¿Qué hora es?</h1>
+
+    <div class="time-style-switcher">
+        <button class="style-button" id="btn-style-formal">Formal (24h)</button>
+        <button class="style-button active" id="btn-style-informal">Informal (12h)</button>
+    </div>
+
+    <div class="mode-switcher">
+        <button class="mode-button active" id="btn-mode-read">Modo 1: Leer</button>
+        <button class="mode-button" id="btn-mode-set">Modo 2: Ajustar</button>
+        <button class="mode-button" id="btn-mode-speak">Modo 3: Hablar</button>
+    </div>
+
+    <div id="mode-read" class="mode-content active">
+        <div class="digital-clock" id="digital-clock-read">00:00</div>
+        <div class="clock" id="clock-read">
+            <div class="hand hour-hand" id="hour-hand-read"></div>
+            <div class="hand minute-hand" id="minute-hand-read"></div>
+            <div class="center-dot"></div>
+            <div class="clock-number num1">1</div> <div class="clock-number num2">2</div> <div class="clock-number num3">3</div> <div class="clock-number num4">4</div> <div class="clock-number num5">5</div> <div class="clock-number num6">6</div> <div class="clock-number num7">7</div> <div class="clock-number num8">8</div> <div class="clock-number num9">9</div> <div class="clock-number num10">10</div> <div class="clock-number num11">11</div> <div class="clock-number num12">12</div>
+        </div>
+        <h2 id="current-level-display-read">Selecciona un nivel</h2>
+        <div class="level-buttons" id="level-buttons-read">
+            <button class="level-button" data-level="1">Nivel 1</button>
+            <button class="level-button" data-level="2">Nivel 2</button>
+            <button class="level-button" data-level="3">Nivel 3</button>
+            <button class="level-button" data-level="4">Nivel 4</button>
+        </div>
+        <div id="options-container"></div>
+    </div>
+
+    <div id="mode-set" class="mode-content">
+        <div class="digital-clock" id="digital-clock-set">12:00</div>
+        <div class="clock draggable" id="clock-set">
+            <div class="hand hour-hand" id="hour-hand-set"></div>
+            <div class="hand minute-hand" id="minute-hand-set"></div>
+            <div class="center-dot"></div>
+            <div class="clock-number num1">1</div> <div class="clock-number num2">2</div> <div class="clock-number num3">3</div> <div class="clock-number num4">4</div> <div class="clock-number num5">5</div> <div class="clock-number num6">6</div> <div class="clock-number num7">7</div> <div class="clock-number num8">8</div> <div class="clock-number num9">9</div> <div class="clock-number num10">10</div> <div class="clock-number num11">11</div> <div class="clock-number num12">12</div>
+        </div>
+        <h2 id="current-level-display-set">Selecciona un nivel</h2>
+        <h3 id="target-time-text"></h3> 
+        <div class="level-buttons" id="level-buttons-set">
+            <button class="level-button" data-level="1">Nivel 1</button>
+            <button class="level-button" data-level="2">Nivel 2</button>
+            <button class="level-button" data-level="3">Nivel 3</button>
+            <button class="level-button" data-level="4">Nivel 4</button>
+        </div>
+        <button id="check-answer-button" class="action-button" style="display: none;">Comprobar</button>
+    </div>
+
+    <div id="mode-speak" class="mode-content">
+        <div class="digital-clock" id="digital-clock-speak">00:00</div>
+        <div class="clock" id="clock-speak">
+            <div class="hand hour-hand" id="hour-hand-speak"></div>
+            <div class="hand minute-hand" id="minute-hand-speak"></div>
+            <div class="center-dot"></div>
+            <div class="clock-number num1">1</div> <div class="clock-number num2">2</div> <div class="clock-number num3">3</div> <div class="clock-number num4">4</div> <div class="clock-number num5">5</div> <div class="clock-number num6">6</div> <div class="clock-number num7">7</div> <div class="clock-number num8">8</div> <div class="clock-number num9">9</div> <div class="clock-number num10">10</div> <div class="clock-number num11">11</div> <div class="clock-number num12">12</div>
+        </div>
+        <h2 id="current-level-display-speak">Selecciona un nivel</h2>
+        <div class="level-buttons" id="level-buttons-speak">
+            <button class="level-button" data-level="1">Nivel 1</button>
+            <button class="level-button" data-level="2">Nivel 2</button>
+            <button class="level-button" data-level="3">Nivel 3</button>
+            <button class="level-button" data-level="4">Nivel 4</button>
+        </div>
+        <div id="speak-controls" style="display: none;">
+            <button id="check-answer-speak" class="action-button">Comprobar</button>
+            <button id="new-time-button" class="action-button secondary-action">Nueva hora</button>
+        </div>
+        <div id="speak-answer-display"></div>
+    </div>
+    
+    <div id="feedback"></div>
+
+
+    <script>
+        // === DEL 1: GLOBALE VARIABLER OG ORDBOK ===
+        
+        let currentLevel = 0;
+        let currentTimeStyle = 'informal'; 
+        let currentCorrectAnswerText = "";
+        let targetTime = { hour: 0, minute: 0 };
+        let currentSpeakTime = {}; 
+
+        // Ordbok for spanske tall
+        const spanishNumbers = [
+            "cero", "uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve",
+            "diez", "once", "doce", "trece", "catorce", "quince", "dieciséis", "diecisiete", "dieciocho", "diecinueve",
+            "veinte", "veintiuno", "veintidós", "veintitrés", "veinticuatro", "veinticinco", "veintiséis", "veintisiete", "veintiocho", "veintinueve"
+        ];
+        // Hjelpefunksjon for tall opp til 59
+        function getNumberText(n) {
+            if (n < 30) return spanishNumbers[n];
+            if (n === 30) return "treinta";
+            if (n < 40) return "treinta y " + spanishNumbers[n - 30];
+            if (n === 40) return "cuarenta";
+            if (n < 50) return "cuarenta y " + spanishNumbers[n - 40];
+            if (n === 50) return "cincuenta";
+            return "cincuenta y " + spanishNumbers[n - 50];
+        }
+
+        const levelNames = ["", "Nivel 1: Horas (en punto)", "Nivel 2: Medias", "Nivel 3: Cuartos", "Nivel 4: Minutos"];
+
+        // Elementer
+        const feedbackEl = document.getElementById('feedback');
+        
+        const btnStyleFormal = document.getElementById('btn-style-formal');
+        const btnStyleInformal = document.getElementById('btn-style-informal');
+        const btnModeRead = document.getElementById('btn-mode-read');
+        const btnModeSet = document.getElementById('btn-mode-set');
+        const btnModeSpeak = document.getElementById('btn-mode-speak');
+        const modeReadContent = document.getElementById('mode-read');
+        const modeSetContent = document.getElementById('mode-set');
+        const modeSpeakContent = document.getElementById('mode-speak');
+
+        const digitalClockRead = document.getElementById('digital-clock-read');
+        const clockRead = { hourHand: document.getElementById('hour-hand-read'), minuteHand: document.getElementById('minute-hand-read') };
+        const levelDisplayRead = document.getElementById('current-level-display-read');
+        const optionsContainer = document.getElementById('options-container');
+
+        const digitalClockSet = document.getElementById('digital-clock-set');
+        const clockSet = document.getElementById('clock-set');
+        const clockSetHands = { hourHand: document.getElementById('hour-hand-set'), minuteHand: document.getElementById('minute-hand-set') };
+        const levelDisplaySet = document.getElementById('current-level-display-set');
+        const targetTimeTextEl = document.getElementById('target-time-text');
+        const checkAnswerButton = document.getElementById('check-answer-button');
+
+        const digitalClockSpeak = document.getElementById('digital-clock-speak');
+        const clockSpeak = { hourHand: document.getElementById('hour-hand-speak'), minuteHand: document.getElementById('minute-hand-speak') };
+        const levelDisplaySpeak = document.getElementById('current-level-display-speak');
+        const speakControls = document.getElementById('speak-controls');
+        const checkAnswerSpeakButton = document.getElementById('check-answer-speak');
+        const newTimeButton = document.getElementById('new-time-button');
+        const speakAnswerDisplay = document.getElementById('speak-answer-display');
+
+        // === DEL 2: LOGIKK ===
+
+        btnStyleFormal.addEventListener('click', () => setTimeStyle('formal'));
+        btnStyleInformal.addEventListener('click', () => setTimeStyle('informal'));
+        btnModeRead.addEventListener('click', () => setMode('read'));
+        btnModeSet.addEventListener('click', () => setMode('set'));
+        btnModeSpeak.addEventListener('click', () => setMode('speak'));
+
+        function setTimeStyle(style) {
+            currentTimeStyle = style;
+            btnStyleFormal.classList.toggle('active', style === 'formal');
+            btnStyleInformal.classList.toggle('active', style === 'informal');
+            currentLevel = 0; resetAllModes();
+        }
+
+        function setMode(mode) {
+            currentLevel = 0; resetAllModes();
+            modeReadContent.classList.toggle('active', mode === 'read');
+            modeSetContent.classList.toggle('active', mode === 'set');
+            modeSpeakContent.classList.toggle('active', mode === 'speak');
+            btnModeRead.classList.toggle('active', mode === 'read');
+            btnModeSet.classList.toggle('active', mode === 'set');
+            btnModeSpeak.classList.toggle('active', mode === 'speak');
+        }
+        
+        function resetAllModes() {
+            feedbackEl.textContent = "";
+            levelDisplayRead.textContent = "Selecciona un nivel";
+            optionsContainer.innerHTML = "";
+            updateDigitalClock(0, 0, digitalClockRead);
+            updateAnalogClock(12, 0, clockRead);
+
+            levelDisplaySet.textContent = "Selecciona un nivel";
+            targetTimeTextEl.textContent = "";
+            checkAnswerButton.style.display = "none";
+            updateDigitalClock(12, 0, digitalClockSet);
+            updateAnalogClock(12, 0, clockSetHands);
+            
+            levelDisplaySpeak.textContent = "Selecciona un nivel";
+            speakControls.style.display = "none";
+            speakAnswerDisplay.textContent = "";
+            updateDigitalClock(0, 0, digitalClockSpeak);
+            updateAnalogClock(12, 0, clockSpeak);
+
+            document.querySelectorAll('.level-button').forEach(btn => btn.classList.remove('active'));
+        }
+
+        // --- NIVÅVELGERE ---
+        function setupLevelButtons(containerId, startFunction, displayEl) {
+            document.querySelectorAll(`#${containerId} .level-button`).forEach(button => {
+                button.addEventListener('click', () => {
+                    currentLevel = parseInt(button.dataset.level);
+                    displayEl.textContent = levelNames[currentLevel];
+                    document.querySelectorAll(`#${containerId} .level-button`).forEach(btn => btn.classList.toggle('active', btn === button));
+                    startFunction();
+                });
+            });
+        }
+        
+        setupLevelButtons('level-buttons-read', startNextRoundRead, levelDisplayRead);
+        setupLevelButtons('level-buttons-set', startNextRoundSet, levelDisplaySet);
+        setupLevelButtons('level-buttons-speak', startNextRoundSpeak, levelDisplaySpeak);
+
+
+        // --- LOGIKK MODUS 1 ---
+        function startNextRoundRead() {
+            let timeData = generateTimeForLevel(currentLevel);
+            currentCorrectAnswerText = (currentTimeStyle === 'formal') ? timeData.formalText : timeData.informalText;
+            updateAnalogClock(timeData.hour, timeData.minute, clockRead);
+            updateDigitalClock(timeData.hour, timeData.minute, digitalClockRead);
+            displayOptions(generateOptions(currentCorrectAnswerText, currentLevel));
+            feedbackEl.textContent = ""; feedbackEl.className = "";
+        }
+
+        function displayOptions(options) {
+            optionsContainer.innerHTML = "";
+            options.forEach(optionText => {
+                const button = document.createElement('button');
+                button.textContent = optionText;
+                button.className = 'option-button';
+                button.addEventListener('click', () => {
+                    document.querySelectorAll('.option-button').forEach(btn => {
+                        btn.disabled = true;
+                        if(btn.textContent === optionText && optionText !== currentCorrectAnswerText) btn.style.backgroundColor = '#d32f2f'; 
+                        else if (btn.textContent === currentCorrectAnswerText) btn.style.backgroundColor = '#388e3c';
+                    });
+                    if (optionText === currentCorrectAnswerText) {
+                        feedbackEl.textContent = "¡Correcto! ¡Muy bien!"; feedbackEl.className = 'correct'; setTimeout(startNextRoundRead, 1500);
+                    } else {
+                        feedbackEl.textContent = `Incorrecto. Era: "${currentCorrectAnswerText}"`; feedbackEl.className = 'incorrect'; setTimeout(startNextRoundRead, 3000);
+                    }
+                });
+                optionsContainer.appendChild(button);
+            });
+        }
+        
+        function generateOptions(correctAnswer, level) {
+            let options = [correctAnswer];
+            while (options.length < 4) {
+                const timeData = generateTimeForLevel(level);
+                const distractor = (currentTimeStyle === 'formal') ? timeData.formalText : timeData.informalText;
+                if (!options.includes(distractor)) options.push(distractor);
+            }
+            return shuffleArray(options);
+        }
+
+        // --- LOGIKK MODUS 2 ---
+        let userSetTime = { hour: 12, minute: 0 };
+        let isDragging = false; 
+
+        checkAnswerButton.addEventListener('click', () => {
+            const snappedTime = snapTimeToLevel(userSetTime.minute, userSetTime.hour);
+            userSetTime = { hour: snappedTime.hour, minute: snappedTime.minute };
+            updateAnalogClock(userSetTime.hour, userSetTime.minute, clockSetHands);
+            updateDigitalClock(userSetTime.hour, userSetTime.minute, digitalClockSet);
+            
+            let targetHour12 = targetTime.hour % 12;
+            if (targetTime.hour === 0 || targetTime.hour === 12) targetHour12 = 12; 
+            
+            if (userSetTime.hour === targetHour12 && userSetTime.minute === targetTime.minute) {
+                feedbackEl.textContent = "¡Correcto! ¡Muy bien!"; feedbackEl.className = 'correct'; setTimeout(startNextRoundSet, 1500);
+            } else {
+                feedbackEl.textContent = `Casi. La hora correcta era ${targetTime.hour}:${padZero(targetTime.minute)}.`; feedbackEl.className = 'incorrect';
+                updateAnalogClock(targetTime.hour, targetTime.minute, clockSetHands);
+                updateDigitalClock(targetTime.hour, targetTime.minute, digitalClockSet);
+                setTimeout(startNextRoundSet, 3000);
+            }
+        });
+
+        function startNextRoundSet() {
+            const timeData = generateTimeForLevel(currentLevel);
+            targetTime = { hour: timeData.hour, minute: timeData.minute };
+            const promptText = (currentTimeStyle === 'formal') ? timeData.formalText : timeData.informalText;
+            targetTimeTextEl.textContent = `Ajusta el reloj a: "${promptText}"`;
+            checkAnswerButton.style.display = 'inline-block';
+            userSetTime = { hour: 12, minute: 0 };
+            updateAnalogClock(12, 0, clockSetHands);
+            updateDigitalClock(12, 0, digitalClockSet);
+            feedbackEl.textContent = ""; feedbackEl.className = "";
+        }
+        
+        // --- LOGIKK MODUS 3 ---
+        checkAnswerSpeakButton.addEventListener('click', () => {
+            speakAnswerDisplay.innerHTML = `<b>Formal:</b> ${currentSpeakTime.formalText}<br><b>Informal:</b> ${currentSpeakTime.informalText}`;
+            speakAnswerDisplay.style.display = 'block';
+        });
+        newTimeButton.addEventListener('click', startNextRoundSpeak);
+
+        function startNextRoundSpeak() {
+            currentSpeakTime = generateTimeForLevel(currentLevel);
+            updateAnalogClock(currentSpeakTime.hour, currentSpeakTime.minute, clockSpeak);
+            updateDigitalClock(currentSpeakTime.hour, currentSpeakTime.minute, digitalClockSpeak);
+            speakAnswerDisplay.textContent = "";
+            speakAnswerDisplay.style.display = 'none';
+        }
+
+        // --- KLOKKE LOGIKK & DRA-FUNKSJONER ---
+        clockSet.addEventListener('mousedown', startDrag); clockSet.addEventListener('touchstart', startDrag, { passive: false });
+        document.addEventListener('mousemove', drag); document.addEventListener('touchmove', drag, { passive: false });
+        document.addEventListener('mouseup', endDrag); document.addEventListener('touchend', endDrag);
+
+        function startDrag(e) { if (currentLevel === 0) return; e.preventDefault(); isDragging = true; clockSet.classList.add('dragging'); updateHandsFromEvent(e); }
+        function drag(e) { if (!isDragging) return; e.preventDefault(); updateHandsFromEvent(e); }
+        function endDrag(e) { if (!isDragging) return; isDragging = false; clockSet.classList.remove('dragging'); const snappedTime = snapTimeToLevel(userSetTime.minute, userSetTime.hour); userSetTime = { hour: snappedTime.hour, minute: snappedTime.minute }; updateAnalogClock(userSetTime.hour, userSetTime.minute, clockSetHands); updateDigitalClock(userSetTime.hour, userSetTime.minute, digitalClockSet); }
+        
+        function updateHandsFromEvent(e) {
+            const rect = clockSet.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            const clientX = e.clientX || e.touches[0].clientX;
+            const clientY = e.clientY || e.touches[0].clientY;
+            const deltaX = clientX - centerX; const deltaY = clientY - centerY;
+            let angleRad = Math.atan2(deltaY, deltaX);
+            let angleDeg = angleRad * (180 / Math.PI) + 90;
+            if (angleDeg < 0) angleDeg += 360;
+            let minute = Math.round(angleDeg / 6);
+            if (minute === 60) minute = 0;
+            const oldMinute = userSetTime.minute;
+            if (oldMinute > 50 && minute < 10) userSetTime.hour = (userSetTime.hour % 12) + 1;
+            else if (oldMinute < 10 && minute > 50) userSetTime.hour = (userSetTime.hour - 2 + 12) % 12 + 1;
+            userSetTime.minute = minute;
+            updateAnalogClock(userSetTime.hour, userSetTime.minute, clockSetHands);
+            updateDigitalClock(userSetTime.hour, userSetTime.minute, digitalClockSet);
+        }
+
+        function snapTimeToLevel(minute, hour) {
+            let snappedMinute = 0; let snappedHour = hour;
+            switch (currentLevel) {
+                case 1: snappedMinute = 0; if (minute > 30) snappedHour = (hour % 12) + 1; break;
+                case 2: if (minute < 15 || minute > 45) { snappedMinute = 0; if (minute > 45) snappedHour = (hour % 12) + 1; } else { snappedMinute = 30; } break;
+                case 3: if (minute < 8) { snappedMinute = 0; } else if (minute < 23) { snappedMinute = 15; } else if (minute < 38) { snappedMinute = 30; } else if (minute < 53) { snappedMinute = 45; } else { snappedMinute = 0; snappedHour = (hour % 12) + 1; } break;
+                case 4: snappedMinute = Math.round(minute / 5) * 5; if (snappedMinute === 60) { snappedMinute = 0; snappedHour = (hour % 12) + 1; } break;
+            }
+            return { hour: snappedHour, minute: snappedMinute };
+        }
+
+
+        // === VIKTIG: SPANSK TIDSLOGIKK ===
+        
+        function generateTimeForLevel(level) {
+            let hour = Math.floor(Math.random() * 24); 
+            let minute = 0;
+            switch (level) {
+                case 1: minute = 0; break;
+                case 2: minute = 30; break;
+                case 3: minute = (Math.random() > 0.5) ? 15 : 45; break;
+                case 4: const intervals = [5, 10, 20, 25, 35, 40, 50, 55]; minute = intervals[Math.floor(Math.random() * intervals.length)]; break;
+            }
+            return { hour, minute, formalText: getFormalSpanishTime(hour, minute), informalText: getInformalSpanishTime(hour, minute) };
+        }
+
+        function getFormalSpanishTime(hour, minute) {
+            // 24-timers logikk (Enkel digital lesning)
+            // Eks: "Son las catorce y treinta"
+            const hourText = getNumberText(hour);
+            const prefix = (hour === 1) ? "Es la" : "Son las"; // Selv formelt bruker man gjerne "Es la una" (13:00)
+            const hourName = (hour === 1 || hour === 13) ? "una" : getNumberText(hour); // Men i 24t sier man "trece"
+            
+            // Vi holder det til streng 24t standard for "Formal"
+            const formalPrefix = (hour === 1) ? "Es la" : "Son las";
+            let formalHourName = getNumberText(hour);
+            if (hour === 1) formalHourName = "una"; // Unntak
+
+            if (minute === 0) return `${formalPrefix} ${formalHourName} horas`;
+            
+            const minuteText = getNumberText(minute);
+            return `${formalPrefix} ${formalHourName} y ${minuteText}`;
+        }
+
+        function getInformalSpanishTime(hour, minute) {
+            // Uformell logikk (12t med "menos")
+            // 1-30: y ...
+            // 31-59: menos ... (Neste time)
+            
+            let targetHour = hour % 12;
+            if (targetHour === 0) targetHour = 12;
+            
+            if (minute === 0) {
+                if (targetHour === 1) return "Es la una en punto";
+                return `Son las ${getNumberText(targetHour)} en punto`;
+            }
+            
+            if (minute <= 30) {
+                // "y ..."
+                const prefix = (targetHour === 1) ? "Es la" : "Son las";
+                const hourName = (targetHour === 1) ? "una" : getNumberText(targetHour);
+                
+                let minName = "";
+                if (minute === 15) minName = "cuarto";
+                else if (minute === 30) minName = "media";
+                else minName = getNumberText(minute);
+                
+                return `${prefix} ${hourName} y ${minName}`;
+            } else {
+                // "menos ..." (Neste time)
+                let nextHour = targetHour + 1;
+                if (nextHour > 12) nextHour = 1;
+                
+                const prefix = (nextHour === 1) ? "Es la" : "Son las"; // Styres av NESTE time
+                const hourName = (nextHour === 1) ? "una" : getNumberText(nextHour);
+                
+                const minutesLeft = 60 - minute;
+                let minName = "";
+                if (minutesLeft === 15) minName = "cuarto";
+                else minName = getNumberText(minutesLeft);
+                
+                return `${prefix} ${hourName} menos ${minName}`;
+            }
+        }
+
+        function updateDigitalClock(hour, minute, clockElement) { clockElement.textContent = `${padZero(hour)}:${padZero(minute)}`; }
+        function padZero(num) { return num < 10 ? '0' + num : num; }
+        function updateAnalogClock(hour, minute, hands) {
+            let hourForCalc = hour % 12; if (hourForCalc === 0) hourForCalc = 12;
+            const hourDeg = (hourForCalc * 30) + (minute * 0.5); const minuteDeg = minute * 6;
+            hands.hourHand.style.transform = `rotate(${hourDeg}deg)`; hands.minuteHand.style.transform = `rotate(${minuteDeg}deg)`;
+        }
+        function shuffleArray(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array; }
+
+        // Start
+        setTimeStyle('informal'); setMode('read');
+
+    </script>
+</body>
+</html>
